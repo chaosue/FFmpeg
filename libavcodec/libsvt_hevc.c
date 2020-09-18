@@ -65,6 +65,8 @@ typedef struct SvtContext {
     int tile_row_count;
     int tile_col_count;
     int tile_slice_mode;
+    int enableSaoFlag;
+    int improveSharpness;
 } SvtContext;
 
 static int error_mapping(EB_ERRORTYPE svt_ret)
@@ -186,6 +188,8 @@ static int config_enc_params(EB_H265_ENC_CONFIGURATION *param,
             avctx->time_base.num * avctx->ticks_per_frame;
     }
 
+    param->enableSaoFlag = svt_enc->enableSaoFlag;
+    param->improveSharpness = svt_enc->improveSharpness;
     param->hierarchicalLevels = svt_enc->hierarchical_level;
     param->encMode = svt_enc->enc_mode;
     param->tier = svt_enc->tier;
@@ -494,6 +498,13 @@ static const AVOption options[] = {
 
     { "sc_detection", "Scene change detection", OFFSET(scd),
       AV_OPT_TYPE_BOOL, { .i64 = 1 }, 0, 1, VE },
+
+   { "sao", "Enable or disable SAO", OFFSET(enableSaoFlag),
+      AV_OPT_TYPE_BOOL, { .i64 = 1 }, 0, 1, VE },
+
+   { "sharp", "Enable or disable sharpness improvement", OFFSET(improveSharpness),
+      AV_OPT_TYPE_BOOL, { .i64 = 0 }, 0, 1, VE },
+
 
     { "thread_count", "Number of threads [0: Auto, 96: Min]", OFFSET(thread_count),
       AV_OPT_TYPE_INT, {.i64 = 0}, 0, INT_MAX, VE },
